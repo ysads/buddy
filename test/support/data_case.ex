@@ -58,4 +58,24 @@ defmodule Buddy.DataCase do
       end)
     end)
   end
+
+  @spec valid_params(list({atom(), atom()})) :: map()
+  def valid_params(fields_with_types) do
+    valid_value_by_type = %{
+      "id" => fn -> 1 end,
+      "integer" => fn -> :rand.uniform(100) end,
+      "string" => fn -> "test" end,
+      "boolean" => fn -> true end,
+      "float" => fn -> :rand.uniform() end,
+      "date" => fn -> ~D[2024-01-01] end,
+      "datetime" => fn -> ~U[2024-01-01 00:00:00Z] end,
+      "iso_month" => fn -> "2024-01" end,
+      "account_type" => fn -> "checking" end
+    }
+
+    for {field, type} <- fields_with_types, into: %{} do
+      type = Atom.to_string(type)
+      {field, valid_value_by_type[type].()}
+    end
+  end
 end

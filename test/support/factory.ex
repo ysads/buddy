@@ -27,7 +27,6 @@ defmodule Buddy.Factory do
     %Provision{
       month: "2024-03",
       amount: 10_000,
-      category_id: Enum.random(1..100),
       category: build(:category)
     }
   end
@@ -38,9 +37,7 @@ defmodule Buddy.Factory do
       description: sequence(:description, &"Transaction #{&1}"),
       date: ~D[2024-03-21],
       account: build(:account),
-      account_id: Enum.random(1..100),
-      provision: build(:provision),
-      provision_id: Enum.random(1..100)
+      provision: build(:provision)
     }
   end
 end

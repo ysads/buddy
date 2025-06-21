@@ -81,5 +81,5 @@ defmodule Buddy.Month.DomainTest do
     end
   end
 
-  defp fake_schema_with_month(), do: {%{}, %{month: :string}}
+  defp fake_schema_with_month, do: {%{}, %{month: :string}}
 end
