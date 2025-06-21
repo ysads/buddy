@@ -1,4 +1,9 @@
 defmodule Buddy.Transaction.Domain do
+  @moduledoc """
+  A transaction is a record of a financial transaction, with amounts stored in cents.
+  It can be associated with another transaction as a transfer pair, to represent a transfer between accounts.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

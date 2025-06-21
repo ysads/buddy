@@ -1,4 +1,6 @@
 defmodule Buddy.Factory do
+  @moduledoc false
+
   use ExMachina.Ecto, repo: Buddy.Repo
 
   alias Buddy.Account.Domain, as: Account

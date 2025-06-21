@@ -16,6 +16,8 @@ defmodule Buddy.DataCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox, as: EctoSandbox
+
   using do
     quote do
       alias Buddy.Repo
@@ -37,8 +39,8 @@ defmodule Buddy.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Buddy.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    pid = EctoSandbox.start_owner!(Buddy.Repo, shared: not tags[:async])
+    on_exit(fn -> EctoSandbox.stop_owner(pid) end)
   end
 
   @doc """

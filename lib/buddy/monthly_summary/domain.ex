@@ -1,4 +1,9 @@
 defmodule Buddy.MonthlySummary.Domain do
+  @moduledoc """
+  A summary of the financial activity for a given month, including income, provisioned, spent, and rollover totals.
+  Amounts are stored in cents.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

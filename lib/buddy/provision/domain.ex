@@ -1,4 +1,8 @@
 defmodule Buddy.Provision.Domain do
+  @moduledoc """
+  A provision is a record of monthly allocation of money for a category, with amounts stored in cents.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

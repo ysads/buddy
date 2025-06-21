@@ -1,4 +1,8 @@
 defmodule Buddy.Account.Domain do
+  @moduledoc """
+  A record of a financial account, with amounts stored in cents.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -29,8 +33,8 @@ defmodule Buddy.Account.Domain do
     timestamps()
   end
 
-  @spec account_types() :: [account_type()]
-  def account_types(), do: @permitted_types
+  @spec account_types :: [account_type()]
+  def account_types, do: @permitted_types
 
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(account \\ %__MODULE__{}, attrs) do

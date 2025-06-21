@@ -1,4 +1,8 @@
 defmodule Buddy.Category.Domain do
+  @moduledoc """
+  Categories are used to group transactions and to create spending allocations.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
