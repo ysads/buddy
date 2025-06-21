@@ -5,6 +5,7 @@ defmodule Buddy.Factory do
 
   alias Buddy.Account.Domain, as: Account
   alias Buddy.Category.Domain, as: Category
+  alias Buddy.MonthlySummary.Domain, as: MonthlySummary
   alias Buddy.Provision.Domain, as: Provision
   alias Buddy.Transaction.Domain, as: Transaction
 
@@ -38,6 +39,16 @@ defmodule Buddy.Factory do
       date: ~D[2024-03-21],
       account: build(:account),
       provision: build(:provision)
+    }
+  end
+
+  def monthly_summary_factory do
+    %MonthlySummary{
+      month: "2024-03",
+      income: 50_000,
+      provisioned: 45_000,
+      spent: 40_000,
+      rollover: 5_000
     }
   end
 end
