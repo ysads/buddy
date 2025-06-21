@@ -114,6 +114,6 @@ jobs:
         run: mix compile --warnings-as-errors
 
       - name: Run tests with coverage
-        run: mix coveralls.github
+        run: mix test.coverage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}q
