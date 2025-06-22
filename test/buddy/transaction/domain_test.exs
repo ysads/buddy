@@ -37,8 +37,7 @@ defmodule Buddy.Transaction.DomainTest do
                amount: ["can't be blank"],
                reference_at: ["can't be blank"],
                type: ["can't be blank"],
-               account_id: ["can't be blank"],
-               provision_id: ["can't be blank"]
+               account_id: ["can't be blank"]
              }
     end
 
@@ -57,6 +56,29 @@ defmodule Buddy.Transaction.DomainTest do
     test "transfer_pair_id is optional" do
       changeset = create_attrs(%{transfer_pair_id: nil}) |> Transaction.changeset()
 
+      assert changeset.valid?
+    end
+
+    test "valid expense requires provision_id" do
+      attrs = create_attrs(%{type: Transaction.types().expense, provision_id: nil})
+
+      changeset = Transaction.changeset(attrs)
+      refute changeset.valid?
+      assert "can't be blank" in errors_on(changeset).provision_id
+
+      # Now with provision_id
+      changeset = Transaction.changeset(Map.put(attrs, :provision_id, 1))
+      assert changeset.valid?
+    end
+
+    test "valid income does not require provision_id" do
+      attrs = create_attrs(%{type: Transaction.types().income, provision_id: nil})
+
+      changeset = Transaction.changeset(attrs)
+      assert changeset.valid?
+
+      # Income can optionally have a provision (for category-specific income)
+      changeset = Transaction.changeset(Map.put(attrs, :provision_id, 1))
       assert changeset.valid?
     end
   end

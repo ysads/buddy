@@ -39,8 +39,8 @@ defmodule Buddy.Transaction.Domain do
     timestamps()
   end
 
-  @required_fields ~w(amount reference_at type account_id provision_id)a
-  @optional_fields ~w(description transfer_pair_id)a
+  @required_fields ~w(amount reference_at type account_id)a
+  @optional_fields ~w(description transfer_pair_id provision_id)a
 
   def types, do: @transaction_types
 
@@ -50,8 +50,19 @@ defmodule Buddy.Transaction.Domain do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_inclusion(:type, Map.values(@transaction_types))
+    |> validate_provision()
     |> foreign_key_constraint(:account_id)
     |> foreign_key_constraint(:provision_id)
     |> foreign_key_constraint(:transfer_pair_id)
+  end
+
+  defp validate_provision(changeset) do
+    type = get_field(changeset, :type)
+
+    if type == @transaction_types.expense do
+      validate_required(changeset, [:provision_id])
+    else
+      changeset
+    end
   end
 end
