@@ -21,10 +21,16 @@ defmodule Buddy.Transaction.Domain do
           updated_at: DateTime.t()
         }
 
+  @transaction_types %{
+    income: "income",
+    expense: "expense"
+  }
+
   schema "transactions" do
     field :amount, :integer
     field :description, :string
     field :date, :date
+    field :type, :string
 
     belongs_to :account, Buddy.Account.Domain, foreign_key: :account_id
     belongs_to :provision, Buddy.Provision.Domain, foreign_key: :provision_id
@@ -33,14 +39,17 @@ defmodule Buddy.Transaction.Domain do
     timestamps()
   end
 
-  @required_fields ~w(amount date account_id provision_id)a
+  @required_fields ~w(amount date type account_id provision_id)a
   @optional_fields ~w(description transfer_pair_id)a
+
+  def types, do: @transaction_types
 
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(transaction \\ %__MODULE__{}, attrs) do
     transaction
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:type, Map.values(@transaction_types))
     |> foreign_key_constraint(:account_id)
     |> foreign_key_constraint(:provision_id)
     |> foreign_key_constraint(:transfer_pair_id)

@@ -7,6 +7,7 @@ defmodule Buddy.Transaction.DomainTest do
     {:amount, :integer},
     {:date, :date},
     {:description, :string},
+    {:type, :string},
     {:account_id, :integer},
     {:provision_id, :integer},
     {:transfer_pair_id, :integer},
@@ -16,13 +17,14 @@ defmodule Buddy.Transaction.DomainTest do
 
   describe "changeset/2" do
     test "valid attributes create a valid changeset" do
-      params = valid_params(@expected_fields_with_types)
-      changeset = Transaction.changeset(params)
+      attrs = create_attrs()
+
+      changeset = Transaction.changeset(attrs)
 
       assert changeset.valid?
 
       for {field, _} <- @expected_fields_with_types do
-        expected = params[Atom.to_string(field)]
+        expected = attrs[Atom.to_string(field)]
         actual = changeset.changes[Atom.to_string(field)]
         assert expected == actual
       end
@@ -34,27 +36,40 @@ defmodule Buddy.Transaction.DomainTest do
       assert errors_on(changeset) == %{
                amount: ["can't be blank"],
                date: ["can't be blank"],
+               type: ["can't be blank"],
                account_id: ["can't be blank"],
                provision_id: ["can't be blank"]
              }
     end
 
+    test "validates type" do
+      changeset = create_attrs(%{type: "invalid"}) |> Transaction.changeset()
+
+      assert errors_on(changeset) == %{type: ["is invalid"]}
+    end
+
     test "description is optional" do
-      changeset = build_changeset(description: nil)
+      changeset = create_attrs(%{description: nil}) |> Transaction.changeset()
 
       assert changeset.valid?
     end
 
     test "transfer_pair_id is optional" do
-      changeset = build_changeset(transfer_pair_id: nil)
+      changeset = create_attrs(%{transfer_pair_id: nil}) |> Transaction.changeset()
 
       assert changeset.valid?
     end
   end
 
-  defp build_changeset(overrides) do
+  describe "types/0" do
+    test "returns the transaction types" do
+      assert Transaction.types() == %{income: "income", expense: "expense"}
+    end
+  end
+
+  defp create_attrs(overrides \\ %{}) do
     valid_params(@expected_fields_with_types)
-    |> Map.merge(Map.new(overrides))
-    |> Transaction.changeset()
+    |> Map.put(:type, Transaction.types().expense)
+    |> Map.merge(overrides)
   end
 end
