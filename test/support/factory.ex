@@ -14,7 +14,7 @@ defmodule Buddy.Factory do
       name: sequence(:name, &"Account #{&1}"),
       currency: "USD",
       balance: 10_000,
-      type: sequence(:type, Account.account_types())
+      type: sequence(:type, Map.values(Account.types()))
     }
   end
 

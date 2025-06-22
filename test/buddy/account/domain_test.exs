@@ -10,15 +10,15 @@ defmodule Buddy.Account.DomainTest do
     type: :string
   ]
 
-  describe "changeset/2" do
+  describe "create_changeset/2" do
     test "valid attributes create a valid changeset" do
-      params = valid_account()
-      changeset = Account.changeset(params)
+      attrs = create_attrs()
 
+      changeset = Account.create_changeset(attrs)
       assert changeset.valid?
 
       for {field, _} <- @expected_fields_with_types do
-        expected = params[field]
+        expected = attrs[field]
         actual = changeset.changes[field]
 
         assert expected == actual
@@ -26,25 +26,25 @@ defmodule Buddy.Account.DomainTest do
     end
 
     test "validates account type" do
-      changeset = build_changeset(type: "invalid")
+      changeset = create_attrs(%{type: "invalid"}) |> Account.create_changeset()
 
       assert "is invalid" in errors_on(changeset).type
     end
 
     test "validates currency" do
-      changeset = build_changeset(currency: "INVALID")
+      changeset = create_attrs(%{currency: "INV"}) |> Account.create_changeset()
 
       assert "is invalid" in errors_on(changeset).currency
     end
 
     test "validates non-negative balance" do
-      changeset = build_changeset(balance: -1)
+      changeset = create_attrs(%{balance: -1}) |> Account.create_changeset()
 
       assert "must be greater than or equal to 0" in errors_on(changeset).balance
     end
 
     test "requires all fields" do
-      changeset = Account.changeset(%{})
+      changeset = Account.create_changeset(%{})
 
       assert errors_on(changeset) == %{
                name: ["can't be blank"],
@@ -55,15 +55,42 @@ defmodule Buddy.Account.DomainTest do
     end
   end
 
-  defp valid_account do
-    valid_params(@expected_fields_with_types)
-    |> Map.put(:type, :checking)
-    |> Map.put(:currency, "USD")
+  describe "update_changeset/2" do
+    test "valid attributes create a valid changeset" do
+      account = build(:account, name: "Test")
+      attrs = %{name: "New Name"}
+
+      changeset = Account.update_changeset(account, attrs)
+
+      assert changeset.valid?
+      assert changeset.changes.name == "New Name"
+    end
+
+    test "non permitted attributes are ignored" do
+      account = build(:account, type: Account.types().checking, currency: "USD", balance: 100)
+      attrs = %{type: Account.types().savings, currency: "EUR", balance: 200}
+
+      changeset = Account.update_changeset(account, attrs)
+      assert changeset.valid?
+
+      for {field, _} <- changeset.changes do
+        assert changeset.changes[field] == nil
+      end
+    end
   end
 
-  defp build_changeset(overrides) do
-    valid_account()
-    |> Map.merge(Map.new(overrides))
-    |> Account.changeset()
+  test "types/0" do
+    assert Account.types() == %{checking: "checking", savings: "savings"}
+  end
+
+  test "currencies/0" do
+    assert Account.currencies() == ["USD", "EUR", "BRL"]
+  end
+
+  defp create_attrs(overrides \\ %{}) do
+    valid_params(@expected_fields_with_types)
+    |> Map.put(:type, Account.types().checking)
+    |> Map.put(:currency, "USD")
+    |> Map.merge(overrides)
   end
 end
