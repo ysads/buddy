@@ -36,7 +36,7 @@ defmodule Buddy.Factory do
     %Transaction{
       amount: 10_000,
       description: sequence(:description, &"Transaction #{&1}"),
-      date: ~D[2024-03-21],
+      reference_at: DateTime.utc_now(),
       type: sequence(:type, Map.values(Transaction.types())),
       account: build(:account),
       provision: build(:provision)

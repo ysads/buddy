@@ -5,7 +5,7 @@ defmodule Buddy.Transaction.DomainTest do
 
   @expected_fields_with_types [
     {:amount, :integer},
-    {:date, :date},
+    {:reference_at, :datetime},
     {:description, :string},
     {:type, :string},
     {:account_id, :integer},
@@ -35,7 +35,7 @@ defmodule Buddy.Transaction.DomainTest do
 
       assert errors_on(changeset) == %{
                amount: ["can't be blank"],
-               date: ["can't be blank"],
+               reference_at: ["can't be blank"],
                type: ["can't be blank"],
                account_id: ["can't be blank"],
                provision_id: ["can't be blank"]

@@ -10,7 +10,7 @@ defmodule Buddy.Transaction.Domain do
   @type t :: %__MODULE__{
           amount: integer(),
           description: String.t(),
-          date: Date.t(),
+          reference_at: DateTime.t(),
           account_id: pos_integer(),
           account: Buddy.Account.Domain.t() | nil,
           provision_id: pos_integer(),
@@ -29,7 +29,7 @@ defmodule Buddy.Transaction.Domain do
   schema "transactions" do
     field :amount, :integer
     field :description, :string
-    field :date, :date
+    field :reference_at, :utc_datetime
     field :type, :string
 
     belongs_to :account, Buddy.Account.Domain, foreign_key: :account_id
@@ -39,7 +39,7 @@ defmodule Buddy.Transaction.Domain do
     timestamps()
   end
 
-  @required_fields ~w(amount date type account_id provision_id)a
+  @required_fields ~w(amount reference_at type account_id provision_id)a
   @optional_fields ~w(description transfer_pair_id)a
 
   def types, do: @transaction_types
