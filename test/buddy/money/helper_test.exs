@@ -10,7 +10,7 @@ defmodule Buddy.Money.HelperTest do
 
     test "formats whole numbers" do
       assert Helper.format(1000) == "10.00"
-      assert Helper.format(50000) == "500.00"
+      assert Helper.format(50_000) == "500.00"
     end
 
     test "formats decimal numbers" do
@@ -23,7 +23,7 @@ defmodule Buddy.Money.HelperTest do
   describe "parse/1" do
     test "parses whole numbers" do
       assert Helper.parse("10.00") == {:ok, 1000}
-      assert Helper.parse("500.00") == {:ok, 50000}
+      assert Helper.parse("500.00") == {:ok, 50_000}
     end
 
     test "parses decimal numbers" do
@@ -34,7 +34,7 @@ defmodule Buddy.Money.HelperTest do
 
     test "parses numbers without decimals" do
       assert Helper.parse("10") == {:ok, 1000}
-      assert Helper.parse("500") == {:ok, 50000}
+      assert Helper.parse("500") == {:ok, 50_000}
     end
 
     test "returns error for invalid format" do
