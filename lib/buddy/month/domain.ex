@@ -8,6 +8,18 @@ defmodule Buddy.Month.Domain do
   @month_regex ~r/^\d{4}-(?:0[1-9]|1[0-2])$/
 
   @doc """
+  Returns the month in YYYY-MM format for a DateTime struct.
+  """
+  @spec of(DateTime.t()) :: t()
+  def of(date) do
+    case date do
+      %DateTime{} -> Calendar.strftime(date, "%Y-%m")
+      %Date{} -> Calendar.strftime(date, "%Y-%m")
+      _ -> raise "Invalid date"
+    end
+  end
+
+  @doc """
   Validates that a month string follows the YYYY-MM format.
   Returns a changeset with error if validation fails.
   """

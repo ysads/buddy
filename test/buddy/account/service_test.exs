@@ -38,4 +38,17 @@ defmodule Buddy.Account.ServiceTest do
       assert current_month_summary.income == 10_000
     end
   end
+
+  describe "get_by_id/1" do
+    test "returns account if one exists" do
+      existing_account = insert(:account)
+
+      assert {:ok, retrieved_account} = Service.get_by_id(existing_account.id)
+      assert existing_account.id == retrieved_account.id
+    end
+
+    test "returns error if none is found" do
+      assert {:error, _} = Service.get_by_id(1)
+    end
+  end
 end

@@ -3,9 +3,12 @@ defmodule Buddy.MonthlySummary.Service do
   Service for managing monthly summaries.
   """
 
+  import Buddy.Transaction.Domain, only: [is_income: 1, is_expense: 1]
+
   alias Buddy.Month.Domain, as: Month
   alias Buddy.MonthlySummary.Domain, as: MonthlySummary
   alias Buddy.Repo
+  alias Buddy.Transaction.Domain, as: Transaction
 
   @doc """
   Finds or creates a monthly summary for the given ISO month.
@@ -21,6 +24,27 @@ defmodule Buddy.MonthlySummary.Service do
     else
       {:error, "Invalid month format"}
     end
+  end
+
+  @doc """
+  Incorporates a transaction into the monthly summary totals.
+  """
+  @spec update_from_transaction(MonthlySummary.t(), Transaction.t()) ::
+          {:ok, MonthlySummary.t()} | {:error, Ecto.Changeset.t()}
+  def update_from_transaction(monthly_summary, %{type: type} = transaction)
+      when is_income(type),
+      do: update_totals(monthly_summary, :income, transaction.amount)
+
+  def update_from_transaction(monthly_summary, %{type: type} = transaction)
+      when is_expense(type),
+      do: update_totals(monthly_summary, :spent, transaction.amount)
+
+  # Private helpers
+
+  defp update_totals(monthly_summary, column, amount) do
+    new_total = Map.get(monthly_summary, column) + amount
+
+    MonthlySummary.changeset(monthly_summary, Map.new([{column, new_total}])) |> Repo.update()
   end
 
   defp create_summary(month, attrs) do

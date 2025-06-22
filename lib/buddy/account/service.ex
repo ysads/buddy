@@ -3,12 +3,14 @@ defmodule Buddy.Account.Service do
   Service layer for managing accounts. Contains all business logic for CRUD operations
   that can be shared across different interfaces (CLI, REST, GraphQL, etc).
   """
+  import Ecto.Query
 
   alias Buddy.Account.Domain, as: Account
+  alias Buddy.Error
   alias Buddy.Month.Domain, as: Month
   alias Buddy.MonthlySummary.Service, as: MonthlySummaryService
   alias Buddy.Repo
-  alias Buddy.Transaction
+  alias Buddy.Transaction.Domain, as: Transaction
   alias Buddy.Transaction.Service, as: TransactionService
 
   @type create_params :: %{
@@ -34,6 +36,25 @@ defmodule Buddy.Account.Service do
     end
   end
 
+  @doc """
+  Update the balance of an account.
+  """
+  @spec update_balance(Account.t(), integer()) ::
+          {:ok, Account.t()} | {:error, Ecto.Changeset.t()}
+  def update_balance(account, balance) do
+    Account.update_changeset(account, %{balance: balance}) |> Repo.update()
+  end
+
+  @spec list_accounts() :: [Account.t()]
+  def list_accounts, do: Account |> order_by(asc: :name) |> Repo.all()
+
+  @spec get_by_id(integer()) :: {:ok, Account.t()} | {:error, any()}
+  def get_by_id(id) do
+    {:ok, Repo.get!(Account, id)}
+  rescue
+    Ecto.NoResultsError -> Error.create("NOT_FOUND", status: 404, details: "Account not found")
+  end
+
   # Private helpers
 
   defp initial_transaction(account_id, amount) do
@@ -41,7 +62,7 @@ defmodule Buddy.Account.Service do
       account_id: account_id,
       amount: amount,
       reference_at: DateTime.utc_now(),
-      type: Transaction.Domain.types().income
+      type: Transaction.types().income
     }
   end
 

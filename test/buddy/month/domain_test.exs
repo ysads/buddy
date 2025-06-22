@@ -3,6 +3,12 @@ defmodule Buddy.Month.DomainTest do
 
   alias Buddy.Month.Domain, as: Month
 
+  describe "of/1" do
+    test "returns the month of the given date" do
+      assert Month.of(~D[2024-01-01]) == "2024-01"
+    end
+  end
+
   describe "valid?/1" do
     test "returns true for valid month formats" do
       valid_months = [

@@ -42,6 +42,9 @@ defmodule Buddy.Transaction.Domain do
   @required_fields ~w(amount reference_at type account_id)a
   @optional_fields ~w(description transfer_pair_id provision_id)a
 
+  defguard is_income(type) when type == @transaction_types.income
+  defguard is_expense(type) when type == @transaction_types.expense
+
   def types, do: @transaction_types
 
   @spec changeset(t(), map()) :: Ecto.Changeset.t()

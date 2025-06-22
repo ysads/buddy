@@ -23,7 +23,7 @@ defmodule Buddy.Account.Domain do
   @currencies ~w(USD EUR BRL)
 
   @required_create_fields [:name, :currency, :balance, :type]
-  @optional_update_fields [:name]
+  @optional_update_fields [:name, :balance]
 
   schema "accounts" do
     field :name, :string

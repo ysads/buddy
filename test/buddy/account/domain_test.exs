@@ -57,18 +57,19 @@ defmodule Buddy.Account.DomainTest do
 
   describe "update_changeset/2" do
     test "valid attributes create a valid changeset" do
-      account = build(:account, name: "Test")
-      attrs = %{name: "New Name"}
+      account = build(:account, name: "Test", balance: 100)
+      attrs = %{name: "New Name", balance: 200}
 
       changeset = Account.update_changeset(account, attrs)
 
       assert changeset.valid?
       assert changeset.changes.name == "New Name"
+      assert changeset.changes.balance == 200
     end
 
     test "non permitted attributes are ignored" do
       account = build(:account, type: Account.types().checking, currency: "USD", balance: 100)
-      attrs = %{type: Account.types().savings, currency: "EUR", balance: 200}
+      attrs = %{type: Account.types().savings, currency: "EUR"}
 
       changeset = Account.update_changeset(account, attrs)
       assert changeset.valid?
